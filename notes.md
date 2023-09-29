@@ -10,6 +10,7 @@ Compatible with:
 	7- Other DBMS using an API plugin.
 
 ## Main concepts
+
 - Entity framework is an ORM .NET open source framework.
 - ADO.NET is used by EF internally. It's a group of libraries for database conectivity and more(excel, access, sql server). With ado.net we can connect to different data sources with a common interface. Entity framework works over that ado.net layer, as well as using datasets or linq to sql.
 
@@ -48,3 +49,96 @@ Using an ORM as a base and resorting to direct SQL queries when necessary is a s
 - Improves security
 - Easier to program backends
 - Control of the changes made in the database
+
+## Data Annotations
+The data annotations are metadata that apply to the properties of a class.
+The metadata modify the behaviour of the properties in different ways as stated.
+
+How to use them: 
+```
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+```
+```
+[Required]
+public string Nombre { get; set; }
+
+[Key]
+public Guid CategoryId { get; set; }
+
+[StringLength(50, MinimumLength = 2)]
+public string Descripcion { get; set; }
+
+[Range(1, 100)]
+public int Cantidad { get; set; }
+
+[RegularExpression(@"^\d{5}$")]
+public string CodigoPostal { get; set; }
+
+[EmailAddress]
+public string CorreoElectronico { get; set; }
+
+[DataType(DataType.Date)]
+public DateTime FechaNacimiento { get; set; }
+
+[Display(Name = "Nombre del Producto")]
+public string Nombre { get; set; }
+
+[Compare("Password", ErrorMessage = "Las contraseñas no coinciden.")]
+public string ConfirmarPassword { get; set; }
+```
+
+## Fluent API
+It's can substitute the data annotations while keeping the "CODE FIRST" principle where 
+the data properties of each column are declared in the program rather than the database trhough
+SQL syntaxis.
+
+The syntax is like "extension methods", chaining the different methods appliying to a table.
+
+```
+protected override void OnModelCreating(ModelBuilder modelBuilder) {
+			modelBuilder.Entity<Category>(cat => {
+				cat.ToTable("Category");
+				cat.HasKey(p => p.CategoryId);
+				cat.Property(p => p.Name).IsRequired().HasMaxLength(150);
+				cat.Property(p => p.Description).HasMaxLength(500);
+			});
+
+			modelBuilder.Entity<Models.Task>(tasks => {
+				tasks.ToTable("Task");
+				tasks.HasKey(p => p.TaskId);
+				tasks.HasOne(p => p.Category).WithMany(p => p.Tasks).HasForeignKey(p => p.CategoryId);
+				tasks.Property(p => p.Title).IsRequired().HasMaxLength(200);
+				tasks.Property(p => p.Description).HasMaxLength(500);
+				tasks.Property(p => p.TaskPriority).IsRequired();
+				tasks.Property(p => p.TaskCreated).IsRequired();
+				tasks.Ignore(p => p.Resumen);
+
+				tasks.Property(p => p.Category).HasConversion();
+
+				...
+				...
+			});
+```
+
+Fluent API enables the fine tuning of the relations, constraints and properties of the tables and datafields.
+
+### Fluent API vs Data Annotations
+
+***FLUENT API Advantages***
+**Better grouping and readability**: Fluent API and the extension methods are all in one single place: 
+the OnModelCreating(ModelBuilder modelbuilder) Method.
+**Flexibility**: Advanced mapping details, complex relationships, and customize specific behaviors.
+
+***FLUENT API CONS***
+**More complex**: Its verbose compared to Data Annotations, specially for simple configurations.
+**Learning curve**: The Fluent API may have a steeper learning curve for new developers, as it requires familiarization with Entity Framework-specific methods and properties.
+
+***Data Annotations Advantages***
+**Simplified syntax**: the attributes for the class properties are set in the own class with simple keywords.
+**Easy for begginners**: Easy to learn and use.
+**Less code**: Sometimes it can be more adequate for basic configurations.
+
+***Data Annotations CONS***
+**Limitations**: Not adequate for advanced, customiced or complex configurations.
+**Less modularity**: The annotations are in each class, which can make the unreadable.
