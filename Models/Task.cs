@@ -23,7 +23,7 @@ namespace EntityFrameworkCourse.Models {
 		public DateTime TaskCreated { get; set; }
 
 		public virtual Category Category { get; set; }
-		
+
 		//[NotMapped]
 		public string Resumen {  get; set; }
 	}

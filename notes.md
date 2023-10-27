@@ -1,4 +1,6 @@
 # Entity Framework fundamentals course
+Tutorial minimal API: https://learn.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-7.0&preserve-view=true&tabs=visual-studio
+
 Compatible with:
 
 	1- SQL Server

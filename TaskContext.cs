@@ -6,7 +6,7 @@ namespace EntityFrameworkCourse {
 
 		public DbSet<Category> Categories { get; set; }
 		//There is a need to specify the folder containing the class in order
-		//to eliminate the ambiguity
+		//to eliminate the ambiguity: Models.Task
 		public DbSet<Models.Task> Tasks { get; set; }
 
 		public TaskContext(DbContextOptions<TaskContext> options) : base(options) { }
@@ -26,7 +26,7 @@ namespace EntityFrameworkCourse {
 				tasks.Property(p => p.Title).IsRequired().HasMaxLength(200);
 				tasks.Property(p => p.Description).HasMaxLength(500);
 				tasks.Property(p => p.TaskPriority).IsRequired();
-				tasks.Property(p => p.TaskCreated).IsRequired();
+				tasks.Property(p => p.TaskCreated).IsRequired();//.IsRequired(false) optional vs tasks.Ignore
 				tasks.Ignore(p => p.Resumen);
 			});
 
